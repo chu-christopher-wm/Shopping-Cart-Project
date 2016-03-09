@@ -60,6 +60,62 @@ if(isset($_POST['register'])) {
 }
 
 
+function addProduct($conn, $id) {
+    $token = getToken();
+    $sql = 'INSERT INTO orders_products (orders_id, products_id) (SELECT o.id, ? FROM users u LEFT JOIN orders o ON u.id = o.users_id AND o.status = "new" WHERE u.token = ?)';
+    $stmt = $conn->prepare($sql);
+    if ($stmt->execute(array($id, $token))) {
+    }
+}
+function deleteProduct($conn, $id) {
+    $token = getToken();
+    $sql = 'DELETE op FROM users u LEFT JOIN orders o ON u.id = o.users_id AND o.status = "new" LEFT JOIN orders_products op ON o.id = op.orders_id WHERE u.token = ? AND op.id = ?';
+    $stmt = $conn->prepare($sql);
+    if ($stmt->execute(array($token, $id))) {
+    }
+}
+function getProducts($conn)
+{
+    $token = getToken();
+    $sql = 'SELECT p.name, p.price, p.preview, op.id FROM users u LEFT JOIN orders o ON u.id = o.users_id AND o.status = "new" LEFT JOIN orders_products op ON o.id = op.orders_id LEFT JOIN products p ON op.products_id = p.id WHERE u.token = ?';
+    $stmt = $conn->prepare($sql);
+    if ($stmt->execute(array($token))) {
+        while ($row = $stmt->fetch()) {
+            if ($row['id'] != null) {
+                echo '<div>
+                   <div class="col-sm-4 col-lg-4 col-md-4" >
+                       <div class="thumbnail" style="height:550px;" >
+                           <img src="' . $row["preview"] . '">
+
+                   Name: ' . $row['name'] . '<br>
+                   Price: $' . $row['price'] . '<br>
+                   <form method="post" action="cart.php">
+                       <input type="hidden" name="id" value="' . $row['id'] . '"/>
+                       <input type="submit" name="delete" value="DELETE"/> Delete
+                   </form>
+                   </div></div>
+                   </div>';
+
+
+            }
+        }
+    }
+}
+function getToken() {
+    if (isset($_COOKIE['token'])) {
+        return $_COOKIE['token'];
+    }
+    else {
+    }
+}
+if(isset($_POST['add'])) {
+    $id = $_POST['id'];
+    addProduct($dbh, $id);
+}
+if(isset($_POST['delete'])) {
+    $id = $_POST['id'];
+    deleteProduct($dbh, $id);
+}
 ?>
 
 <!DOCTYPE html>
@@ -72,7 +128,7 @@ if(isset($_POST['register'])) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="jquery.easing.min.js"></script>
-
+    <script src="shop.js"></script>
     <style>
         #Osamacare {
             position: absolute;
@@ -140,7 +196,7 @@ if(isset($_POST['register'])) {
         }
     </style>
 </head>
-<body>
+<body onload="onLoad()">
 <script>
 
     $(window).scroll(function() {
@@ -465,47 +521,46 @@ if(isset($_POST['register'])) {
         <div class="bs-example" data-example-id="thumbnails-with-custom-content">
             <div class="row">
                 <div class="col-sm-6 col-md-4">
-                    <div class="thumbnail">
+                    <div class="thumbnail simpleCart_shelfItem">
                         <img alt="100%x200" data-holder-rendered="true" data-src=
                                 "holder.js/100%x200" src=
                                      "http://i.ebayimg.com/00/s/NTIxWDY4MQ==/z/GYcAAOSwL7VWjo-m/$_35.JPG"
                              style="height: 200px; width: 100%; display: block;">
-                            <form>
+
                         <div class="caption">
-                            <h3>$1500</h3>
+                            <h3 class="item_price">$1500</h3>
 
 
-                            <p>This sporty looking Jetta gives their connoiseur a rush to drive on the track or just
+                            <p>This sporty looking Jetta gives their connoisseur a rush to drive on the track or just
                                 a casual ride on the road. This car is time limited and will go soon! So buy now before
                                 this awesome car has a new owner.
                             </p>
-
-
-                            <p><a class="btn btn-primary" href="cart.php" role=
-                                    "button">Buy Now!</a></p>
-
-                        </div>
+                            <form action="cart.php" method="post">
+                            <p><a class="btn btn-primary item_add" href="cart.php" role=
+                                "button" onclick="addProduct('product_1')">Buy Now!</a></p>
                             </form>
+                        </div>
+
                     </div>
                 </div>
 
 
                 <div class="col-sm-6 col-md-4">
-                    <div class="thumbnail">
+                    <div class="thumbnail simpleCart_shelfItem">
                         <img alt="100%x200" data-holder-rendered="true" data-src=
                                 "holder.js/100%x200" src=
                                      "http://germancarsforsaleblog.com/wp-content/uploads/2015/10/012-570x428.jpg"
                              style="height: 200px; width: 100%; display: block;">
                         <form>
                         <div class="caption">
-                            <h3>$2000</h3>
+                            <h3 class="item_price">$2000</h3>
 
 
                             <p>An older model yet exciting to say the least, this offers an all around experience for Jetta maniacs like myself, a little faster yet still all around safe and reliable.</p>
 
 
-                            <p><a class="btn btn-primary" href="cart.php" role=
-                                    "button">Buy Now!</a></p>
+                            <p><a class="btn btn-primary item_add" href="cart.php" role=
+                                    "button" onclick="addProduct('product_2')">Buy Now!</a></p>
                         </div>
                         </form>
                     </div>
@@ -513,22 +568,195 @@ if(isset($_POST['register'])) {
 
 
                 <div class="col-sm-6 col-md-4">
-                    <div class="thumbnail">
+                    <div class="thumbnail simpleCart_shelfItem">
                         <img alt="100%x200" data-holder-rendered="true" data-src=
                                 "holder.js/100%x200" src=
                                      "http://www.vwvortex.com/artman/uploads/ab_kidshorty_03.jpg"
                              style="height: 200px; width: 100%; display: block;">
                         <form>
                         <div class="caption">
-                            <h3>$2500</h3>
+                            <h3 class="item_price">$2500</h3>
 
 
                             <p>This is meant for a true speed demon, racing grade wheels as well as an engine swap to top it all off. I bet an englishman could smell the petrol all the way from here!</p>
 
 
-                            <p><a class="btn btn-primary" href="cart.php" role=
-                                    "button">Buy Now!</a></p>
+                            <p><a class="btn btn-primary item_add" href="cart.php" role=
+                                    "button" onclick="addProduct('product_3')">Buy Now!</a></p>
                         </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="pro-section" id="pro">
+    <div style="background-color: dodgerblue;">
+        <br><br>
+        <div class="bs-example" data-example-id="thumbnails-with-custom-content">
+            <div class="row">
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail simpleCart_shelfItem">
+                        <img alt="100%x200" data-holder-rendered="true" data-src=
+                        "holder.js/100%x200" src=
+                             "http://static.cargurus.com/images/site/2008/06/24/22/26/2001_volkswagen_jetta_gls-pic-16581-1600x1200.jpeg"
+                             style="height: 200px; width: 100%; display: block;">
+
+                        <div class="caption">
+                            <h3 class="item_price">$1500</h3>
+
+
+                            <p>This Jetta gives their connoisseur a rush to drive on the track or just
+                                a casual ride on the road. This car is time limited and will go soon! So buy now before
+                                this awesome car has a new owner.
+                            </p>
+                            <form action="cart.php" method="post">
+                                <p><button class="btn btn-primary item_add" value="1" type="submit" name="addProduct" role=
+                                    "button" onclick="addProduct('product_4')">Buy Now!</button></p>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail simpleCart_shelfItem">
+                        <img alt="100%x200" data-holder-rendered="true" data-src=
+                        "holder.js/100%x200" src=
+                             "https://media.ed.edmunds-media.com/volkswagen/jetta/2001/oem/2001_volkswagen_jetta_sedan_glx-vr6_fq_oem_1_300.jpg"
+                             style="height: 200px; width: 100%; display: block;">
+                        <form>
+                            <div class="caption">
+                                <h3 class="item_price">$2000</h3>
+
+
+                                <p>An older model yet exciting to say the least, this offers an all around experience for Jetta maniacs like myself, a little faster yet still all around safe and reliable.</p>
+
+
+                                <p><a class="btn btn-primary item_add" href="cart.php" role=
+                                    "button" onclick="addProduct('product_5')">Buy Now!</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail simpleCart_shelfItem">
+                        <img alt="100%x200" data-holder-rendered="true" data-src=
+                        "holder.js/100%x200" src=
+                             "http://www.runwalkjog.com/rhodeislandcars/providence/01volkswagenjetta51108.JPG"
+                             style="height: 200px; width: 100%; display: block;">
+                        <form>
+                            <div class="caption">
+                                <h3 class="item_price">$2500</h3>
+
+
+                                <p>This is meant for a true speed demon, racing grade wheels as well as an engine swap to top it all off. I bet an englishman could smell the petrol all the way from here!</p>
+
+
+                                <p><a class="btn btn-primary item_add" href="cart.php" role=
+                                    "button" onclick="addProduct('product_6')">Buy Now!</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="pro-section" id="pro">
+    <div style="background-color: dodgerblue;">
+        <br><br>
+        <div class="bs-example" data-example-id="thumbnails-with-custom-content">
+            <div class="row">
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail simpleCart_shelfItem">
+                        <img alt="100%x200" data-holder-rendered="true" data-src=
+                        "holder.js/100%x200" src=
+                             "http://image.superstreetonline.com/f/30210095+w+h+q80+re0+cr1/eurp_1102_01_o%2B2001_vw_jetta%2Bleft_side_view.jpg"
+                             style="height: 200px; width: 100%; display: block;">
+
+                        <div class="caption">
+                            <h3 class="item_price">$1500</h3>
+
+
+                            <p>This sporty looking Jetta gives their connoisseur a rush to drive on the track or just
+                                a casual ride on the road. This car is time limited and will go soon! So buy now before
+                                this awesome car has a new owner.
+                            </p>
+                            <form action="cart.php" method="post">
+                                <p><button class="btn btn-primary item_add" value="1" type="submit" name="addProduct" role=
+                                    "button" onclick="addProduct('product_7')">Buy Now!</button></p>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail simpleCart_shelfItem">
+                        <img alt="100%x200" data-holder-rendered="true" data-src=
+                        "holder.js/100%x200" src=
+                             "http://www.gotshadeonline.com/wp-content/gallery/2001-volkswagen-jetta/01-volkswagen-jetta-04.jpg"
+                             style="height: 200px; width: 100%; display: block;">
+                        <form>
+                            <div class="caption">
+                                <h3 class="item_price">$2000</h3>
+
+
+                                <p>An older model yet exciting to say the least, this offers an all around experience for Jetta maniacs like myself, a little faster yet still all around safe and reliable.</p>
+
+
+                                <p><a class="btn btn-primary item_add" href="cart.php" role=
+                                    "button" onclick="addProduct('product_8')">Buy Now!</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail simpleCart_shelfItem">
+                        <img alt="100%x200" data-holder-rendered="true" data-src=
+                        "holder.js/100%x200" src=
+                             "http://www.vwvortex.com/artman/uploads/ab_kidshorty_03.jpg"
+                             style="height: 200px; width: 100%; display: block;">
+                        <form>
+                            <div class="caption">
+                                <h3 class="item_price">$2500</h3>
+
+
+                                <p>This is meant for a true speed demon, racing grade wheels as well as an engine swap to top it all off. I bet an englishman could smell the petrol all the way from here!</p>
+
+
+                                <p><a class="btn btn-primary item_add" href="cart.php" role=
+                                    "button" onclick="addProduct('9')">Buy Now!</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <br><br>
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail simpleCart_shelfItem">
+                        <img alt="100%x200" data-holder-rendered="true" data-src=
+                        "holder.js/100%x200" src=
+                             "http://carphotos.cardomain.com/ride_images/4/295/4241/38237120012_original.jpg"
+                             style="height: 200px; width: 100%; display: block;">
+                        <form>
+                            <div class="caption">
+                                <h3 class="item_price">$2500</h3>
+
+
+                                <p>This is meant for a true speed demon, racing grade wheels as well as an engine swap to top it all off. I bet an englishman could smell the petrol all the way from here!</p>
+
+
+                                <p><a class="btn btn-primary item_add" href="cart.php" role=
+                                    "button" onclick="addProduct('10')">Buy Now!</a></p>
+                            </div>
                         </form>
                     </div>
                 </div>
