@@ -612,8 +612,8 @@ if(isset($_POST['delete'])) {
                                 this awesome car has a new owner.
                             </p>
                             <form action="cart.php" method="post">
-                                <p><button class="btn btn-primary item_add" value="1" type="submit" name="addProduct" role=
-                                    "button" onclick="addProduct('product_4')">Buy Now!</button></p>
+                                <p><a class="btn btn-primary item_add" href="cart.php" type="submit" name="addProduct" role=
+                                    "button" onclick="addProduct('product_4')">Buy Now!</a></p>
                             </form>
                         </div>
 
@@ -688,8 +688,8 @@ if(isset($_POST['delete'])) {
                                 this awesome car has a new owner.
                             </p>
                             <form action="cart.php" method="post">
-                                <p><button class="btn btn-primary item_add" value="1" type="submit" name="addProduct" role=
-                                    "button" onclick="addProduct('product_7')">Buy Now!</button></p>
+                                <p><a class="btn btn-primary item_add" href="cart.php" type="submit" name="addProduct" role=
+                                    "button" onclick="addProduct('product_7')">Buy Now!</a></p>
                             </form>
                         </div>
 
@@ -751,11 +751,11 @@ if(isset($_POST['delete'])) {
                                 <h3 class="item_price">$2500</h3>
 
 
-                                <p>This is meant for a true speed demon, racing grade wheels as well as an engine swap to top it all off. I bet an englishman could smell the petrol all the way from here!</p>
+                                <p>An older model yet exciting to say the least, this offers an all around experience for Jetta maniacs like myself, a little faster yet still all around safe and reliable.</p>
 
 
                                 <p><a class="btn btn-primary item_add" href="cart.php" role=
-                                    "button" onclick="addProduct('10')">Buy Now!</a></p>
+                                    "button" onclick="addProduct('product_10')">Buy Now!</a></p>
                             </div>
                         </form>
                     </div>

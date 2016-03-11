@@ -246,7 +246,7 @@ function pullCart() {
         createTable.appendChild(node);
         document.getElementById("cartList").appendChild(createTable);
         node.setAttribute("id", "product5");
-        document.getElementById("product5").innerHTML = '<img src="https://media.ed.edmunds-media.com/volkswagen/jetta/2001/oem/2001_volkswagen_jetta_sedan_glx-vr6_fq_oem_1_300.jpg" alt="" height="180px"></'
+        document.getElementById("product5").innerHTML = '<img src="https://media.ed.edmunds-media.com/volkswagen/jetta/2001/oem/2001_volkswagen_jetta_sedan_glx-vr6_fq_oem_1_300.jpg" alt="" height="180px"></a>'
 
         var node = document.createElement("TD");                        //First create an TD node
         var textnode = document.createTextNode(product_5);            //then create a Text node
@@ -255,7 +255,7 @@ function pullCart() {
         document.getElementById("cartList").appendChild(createTable);  //Finally append the TD node to the table
 
         var node = document.createElement("TD");                        //First create an TD node
-        var textnode = document.createTextNode("$" + product_1 * 2000);            //then create a Text node
+        var textnode = document.createTextNode("$" + product_5 * 2000);            //then create a Text node
         node.appendChild(textnode);                                     //then append the Text node to the TD node
         createTable.appendChild(node);
         document.getElementById("cartList").appendChild(createTable);  //Finally append the TD node to the table
@@ -363,7 +363,7 @@ function pullCart() {
         node.appendChild(textnode);                                     //then append the Text node to the TD node
         createTable.appendChild(node);
         document.getElementById("cartList").appendChild(createTable);  //Finally append the TD node to the table
-    }2
+    }
 
     if (product_10 > 0) {
         var createTable = document.createElement("TR");
@@ -390,7 +390,7 @@ function pullCart() {
         document.getElementById("cartList").appendChild(createTable);  //Finally append the TD node to the table
 
     }
-
-
+    document.getElementById("amount").innerHTML = "Number of Items: " + (Number(product_1) + Number(product_2) + Number(product_3) + Number(product_4) + Number(product_5) + Number(product_6) + Number(product_7) + Number(product_8) + Number(product_9) + Number(product_10))
+    document.getElementById("priceAmount").innerHTML = "Price: $" + ((Number(product_1) * 1500) + (Number(product_2) * 2000) + (Number(product_3) * 2500) + (Number(product_4) * 1500) + (Number(product_5) * 2000) + (Number(product_6) * 2500) + (Number(product_7) * 1500) + (Number(product_8) * 2000) + (Number(product_9) * 2500) + (Number(product_10) * 2500))
 
 }
